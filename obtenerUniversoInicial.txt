@@ -1,0 +1,6 @@
+=LAMBDA(cifras,LET(
+    iterFilas,SEQUENCE(POWER(10,cifras)),iterColumnas,SEQUENCE(1,cifras),
+    universo,MID(TEXT(iterFilas-1,REPT("0",cifras)),iterColumnas,1),
+    validosCheck,BYROW(universo,LAMBDA(row,cifras=COLUMNS(UNIQUE(row,TRUE)))),
+    universoInicial,1*FILTER(universo,validosCheck),
+    universoInicial))

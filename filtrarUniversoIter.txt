@@ -1,0 +1,17 @@
+=LAMBDA(apiladoUniversos,iterCol,iteracion,rangoPicas,rangoFijas,LET(
+    cantidadCifras,COLUMNS(apiladoUniversos)/iteracion,
+    relleno,IF(iterCol>0,"_","Error relleno"),
+    numeroPosibilidadesOriginal,ROWS(apiladoUniversos),
+    iterFilasUniverso,SEQUENCE(numeroPosibilidadesOriginal),
+    actualUniverso,INDEX(apiladoUniversos,iterFilasUniverso,SEQUENCE(1,cantidadCifras,cantidadCifras*(iteracion-1)+1)),
+    suposicionesAnteriores,IF(iteracion=1,IF(iterCol>0,"X","Y"),INDEX(apiladoUniversos,1,SEQUENCE(1,cantidadCifras*iteracion-1))),
+    entradaUniverso,ordenarPorMenosOcurrencias(actualUniverso,suposicionesAnteriores),
+    row,INDEX(actualUniverso,1,iterCol),
+    fijas,BYROW(entradaUniverso,LAMBDA(rowIter,SUM(1*(iterCol=IFERROR(MATCH(rowIter,row,0),0))))),
+    picas,BYROW(entradaUniverso,LAMBDA(rowIter,SUM(1*ISNUMBER(MATCH(rowIter,row,0)))))-fijas,
+    validosCheck,BYROW(HSTACK(picas,fijas),CONCAT),
+    PicasFijas,CONCAT(INDEX(rangoPicas,iteracion),INDEX(rangoFijas,iteracion)),
+    universoValidos,FILTER(entradaUniverso,validosCheck=PicasFijas,IF(iterCol>0,"X","Y")),
+    tamañoUniversoIteracion,ROWS(universoValidos),
+    salida,VSTACK(universoValidos,IF(SEQUENCE(numeroPosibilidadesOriginal-tamañoUniversoIteracion),relleno)),
+    salida))
